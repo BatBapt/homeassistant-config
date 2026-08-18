@@ -1,0 +1,41 @@
+envoyer_liste_courses:
+  alias: Envoyer la liste de courses
+  mode: restart
+  sequence:
+    - action: todo.get_items
+      target:
+        entity_id: todo.shopping_list
+      data:
+        status: needs_action
+      response_variable: resultat
+
+    - variables:
+        articles: "{{ resultat['todo.shopping_list']['items'] }}"
+        reponse:
+          nombre: "{{ resultat['todo.shopping_list']['items'] | count }}"
+
+    - if:
+        - condition: template
+          value_template: "{{ articles | count == 0 }}"
+      then:
+        - stop: "Liste vide"
+          response_variable: reponse
+
+    - action: notify.courses_mail
+      data:
+        title: Liste de courses
+        message: >-
+          {% for item in articles %}- {{ item.summary }}
+          {% endfor %}
+
+    - repeat:
+        for_each: "{{ articles | map(attribute='summary') | list }}"
+        sequence:
+          - action: todo.remove_item
+            target:
+              entity_id: todo.shopping_list
+            data:
+              item: "{{ repeat.item }}"
+
+    - stop: "Envoyé"
+      response_variable: reponse

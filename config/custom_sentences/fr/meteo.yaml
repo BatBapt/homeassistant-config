@@ -1,0 +1,16 @@
+language: "fr"
+intents:
+  MeteoDemain:
+    data:
+      - sentences:
+          - "[quel] temps [fait-il|il fait|il va faire|va-t-il faire] demain"
+          - "[quelle est la] météo [de|pour] demain"
+          - "il va faire quoi demain"
+          - "est-ce qu'il [va|vas] pleuvoir demain"
+          - "[est-ce qu']il pleut demain"
+          - "[la] météo demain"
+          - "demain il fait quoi"
+          - "il fait quel temps demain"
+          - "il fera quel temps demain"
+          - "quel temps demain"
+          - "[et] demain [il fait quoi|quel temps]"

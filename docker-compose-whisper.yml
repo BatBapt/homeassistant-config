@@ -1,0 +1,19 @@
+services:
+  whisper:
+    build:
+      context: /home/homeassistant
+      dockerfile: DockerFile-whisper
+    container_name: whisper
+    ports:
+      - "10300:10300"  # Port pour l'API Whisper
+    volumes:
+      - /home/homeassistant/whisper:/data  # Dossier pour les modèles et données
+    devices:
+      - "/dev/snd:/dev/snd"  # Accès au microphone
+    group_add:
+      - audio  # Permissions pour utiliser l'audio
+    environment:
+      - ALSA_CARD=0  # Carte son par défaut (ajuste si nécessaire)
+    command: --model small --language fr  # Modèle léger et langue française
+    restart: unless-stopped
+    

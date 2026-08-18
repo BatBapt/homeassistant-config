@@ -1,0 +1,129 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# http:
+#  ssl_certificate: ssl/fullchain.pem
+#  ssl_key: ssl/privkey.pem
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+template:
+  - trigger:
+      - platform: time_pattern
+        minutes: "/30"
+      - platform: homeassistant
+        event: start
+    action:
+      - action: weather.get_forecasts
+        target:
+          entity_id: weather.home
+        data:
+          type: daily
+        response_variable: prev
+    sensor:
+      - name: "Meteo tomorrow"
+        unique_id: meteo_demain
+        state: "{{ prev['weather.home'].forecast[1].condition }}"
+        attributes:
+          temperature: "{{ prev['weather.home'].forecast[1].temperature }}"
+          templow: "{{ prev['weather.home'].forecast[1].templow }}"
+          precipitation: "{{ prev['weather.home'].forecast[1].precipitation }}"
+          wind_speed: "{{ prev['weather.home'].forecast[1].wind_speed }}"
+intent_script:
+  EnvoyerListeCourses:
+    async_action: true
+    action:
+      action: script.envoyer_liste_courses
+    speech:
+      text: >-
+        {% if states('todo.shopping_list') | int(0) > 0 %}
+        C'est parti, la liste est dans ta boite mail.
+        {% else %}
+        La liste de courses est vide, je n'ai rien envoyé.
+        {% endif %}
+  RaspberryStatus:
+    speech:
+      text: >
+        {% set t = states('sensor.pi_cpu_temp') | float(default=-1) %}
+        {% if t < 0 %}
+          Je n'arrive pas à lire la température du processeur.
+        {% elif t >= 80 %}
+          Attention, le Raspberry est à {{ t | round(0) }} degrés, il est en throttling.
+        {% elif t >= 70 %}
+          Le Raspberry est à {{ t | round(0) }} degrés, ça commence à chauffer.
+        {% else %}
+          Le Raspberry est à {{ t | round(0) }} degrés.
+        {% endif %}
+
+  RaspberryHealth:
+    speech:
+      text: >
+        {% set t = states('sensor.pi_cpu_temp') | float(default=-1) %}
+        {% set l = 
+        states('sensor.pi_load_1m') | float(default=-1) %}
+        {% set d = states('sensor.pi_disk_use') | float(default=-1) %}
+        {% set b = states('sensor.pi_last_boot') | as_datetime %}
+        Température {{ t | round(0) }} degrés,
+        charge {{ l | round(1) }},
+        disque occupé à {{ d | round(0) }} pour cent.
+        {% if b %}
+          {% set h = ((now() - b).total_seconds() / 3600) | round(0) | int %}
+          {% if h < 48 %}
+            Démarré il y a {{ h }} heure{{ 's' if h > 1 }}.
+          {% else %}
+            Démarré il y a {{ (h / 24) | round(0) | int }} jours.
+          {% endif %}
+        {% endif %}
+  MeteoDemain:
+    speech:
+      text: >
+        {% set c = {
+          'clear-night': 'ciel dégagé', 'cloudy': 'nuageux', 'fog': 'brouillard',
+          'hail': 'grêle', 'lightning': 'orageux', 'lightning-rainy': 'orageux avec pluie',
+          'partlycloudy': 'partiellement nuageux', 'pouring': 'forte pluie',
+          'rainy': 'pluvieux', 'snowy': 'neigeux', 'snowy-rainy': 'pluie et neige',
+          'sunny': 'ensoleillé', 'windy': 'venteux', 'windy-variant': 'venteux',
+          'exceptional': 'exceptionnel'
+        } %}
+        {% set s = states('sensor.weather_tomorrow') %}
+        {% if s in ['unknown', 'unavailable'] %}
+          Je n'ai pas encore les prévisions.
+        {% else %}
+          {% set tmax = state_attr('sensor.weather_tomorrow', 'temperature') | float(default=0) %}
+          {% set tmin = state_attr('sensor.weather_tomorrow', 'templow') | float(default=0) %}
+          {% set p = state_attr('sensor.weather_tomorrow', 'precipitation') | float(default=0) %}
+          {% set w = state_attr('sensor.weather_tomorrow', 'wind_speed') | float(default=0) %}
+          Demain, {{ c.get(s, s) }},
+          {{ tmax | round(0) }} degrés au maximum,
+          {{ tmin | round(0) }} au minimum.
+          {% if p >= 5 %}
+            Prévoyez de la pluie.
+          {% elif p > 0.5 %}
+            Quelques précipitations attendues.
+          {% elif p > 0 %}
+            Un peu d'humidité possible.
+          {% endif %}
+          {% if w >= 50 %}
+            Vent fort, {{ w | round(0) }} kilomètres heure.
+          {% elif w >= 25 %}
+            Vent soutenu, {{ w | round(0) }} kilomètres heure.
+          {% endif %}
+        {% endif %}
+notify:
+  - name: courses_mail
+    platform: smtp
+    server: smtp.gmail.com
+    port: 587
+    encryption: starttls
+    sender: !secret smtp_sender
+    username: !secret smtp_sender
+    password: !secret smtp_password
+    recipient:
+      - !secret smtp_recipient
+    sender_name: Home Assistant

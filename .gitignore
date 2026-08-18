@@ -1,0 +1,45 @@
+# Secrets
+secrets.yaml
+.env
+*.key
+*.pem
+*.crt
+*.token
+
+# Donnees internes Home Assistant
+config/.storage/
+config/.cloud/
+config/.uuid
+config/.HA_VERSION
+config/deps/
+config/tts/
+config/www/community/
+
+# Volumes de donnees des services vocaux
+# Modeles retelecharges automatiquement par les conteneurs
+ollama/
+whisper/
+piper/
+openwakeword/
+
+# Base de donnees et logs
+*.db
+*.db-shm
+*.db-wal
+*.log
+*.log.*
+
+# Sauvegardes
+config/backups/
+*.tar
+*.tar.gz
+
+# Divers
+__pycache__/
+*.pyc
+tmp.txt
+
+# Fichiers d'etat runtime
+config/.ha_run.lock
+config/.shopping_list.json
+*.wav

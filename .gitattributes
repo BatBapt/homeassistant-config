@@ -1,0 +1,15 @@
+* text=auto eol=lf
+
+*.sh text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+run text eol=lf
+Dockerfile text eol=lf
+
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+*.png binary
+*.jpg binary
+*.tar binary
+*.db binary

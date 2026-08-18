@@ -1,0 +1,12 @@
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"  # Port pour accéder à l'API Ollama
+    volumes:
+      - /home/homeassistant/ollama/:/root/.ollama  # Volume persistant pour les modèles et données
+    environment:
+      - OLLAMA_KEEP_ALIVE=-1
+      - OLLAMA_NUM_THREAD=2
+    restart: unless-stopped

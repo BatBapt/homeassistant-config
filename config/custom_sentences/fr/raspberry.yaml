@@ -1,0 +1,13 @@
+language: "fr"
+intents:
+  RaspberryStatus:
+    data:
+      - sentences:
+          - "quelle est la température du (raspberry|raspberry pi|pi|serveur)"
+          - "à quelle température est le (raspberry|serveur)"
+          - "combien fait le (raspberry|serveur)"
+  RaspberryHealth:
+    data:
+      - sentences:
+          - "comment va le (raspberry|serveur)"
+          - "quel est l'état du (raspberry|serveur)"

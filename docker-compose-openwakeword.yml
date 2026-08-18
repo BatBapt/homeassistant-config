@@ -1,0 +1,21 @@
+services:
+  openwakeword:
+    image: dustynv/wyoming-openwakeword:latest-r36.2.0
+    restart: unless-stopped
+    network_mode: host
+    container_name: openwakeword
+    ports:
+      - "10400:10400"
+    volumes:
+      - /home/homeassistant/openwakeword:/data
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    group_add:
+      - audio
+    devices:
+      - "/dev/snd:/dev/snd"
+    environment:
+      OPENWAKEWORD_CUSTOM_MODEL_DIR: /share/openwakeword
+      OPENWAKEWORD_PRELOAD_MODEL: hey_jarvis
+      OPENWAKEWORD_THRESHOLD: 0.4
+      OPENWAKEWORD_TRIGGER_LEVEL: 1

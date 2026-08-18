@@ -1,0 +1,39 @@
+services:
+  homeassistant:
+    container_name: homeassistant
+    build:
+      context: /home/homeassistant
+      dockerfile: DockerFile-homeassistant
+    # image ghcr.io/home-assistant/home-assistant:stable
+    volumes:
+      - ./config:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    ports:
+      - "8123:8123"
+    environment:
+      - TZ=Atlantic/Reykjavik
+    
+  assist-microphone:
+    image: dustynv/wyoming-assist-microphone:latest-r36.2.0
+    restart: unless-stopped
+    network_mode: host
+    container_name: assist-microphone
+    ports:
+      - "10700:10700"
+    devices:
+      - /dev/snd:/dev/snd
+      - /dev/bus/usb
+    volumes:
+      - /home/homeassistant/assist-microphone:/share
+      - /home/homeassistant/assist-microphone/run:/etc/s6-overlay/s6-rc.d/assist_microphone/run:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      SATELLITE_AUDIO_DEVICE: "plughw:CARD=UACDemoV10,DEV=0"
+      SATELLITE_SND_VOLUME_MULTIPLIER: 0.6
+      WAKEWORD_NAME: "hey_jarvis"
+      ASSIST_PIPELINE_NAME: "Home Assistant"
+      SATELLITE_MIC_DEVICE: "plughw:CARD=Microphone,DEV=0"

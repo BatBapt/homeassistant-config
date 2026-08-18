@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  piper:
+    build:
+      context: /home/homeassistant
+      dockerfile: DockerFile-piper
+    container_name: piper
+    ports:
+      - "10200:10200"
+    volumes:
+      - /home/homeassistant/piper:/data
+    devices:
+      - "/dev/snd:/dev/snd"
+    group_add:
+      - audio
+    environment:
+      - ALSA_CARD=2
+    command: --voice fr_FR-siwis-medium
+    restart: unless-stopped
+
+

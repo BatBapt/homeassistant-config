@@ -1,0 +1,8 @@
+language: fr
+intents:
+  EnvoyerListeCourses:
+    data:
+      - sentences:
+          - "envoie[-] moi la liste [de|des] courses par (mail|email|e-mail)"
+          - "envoie la liste [de|des] courses par (mail|email|e-mail)"
+          - "envoie[-] moi les courses par (mail|email|e-mail)"
