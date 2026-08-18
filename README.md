@@ -51,21 +51,21 @@ content are in French as they appear in the repository.
 ```
                           Raspberry Pi
    ┌───────────────────────────────────────────────────────────┐
-   │  homeassistant (Docker, host network)         :8123        │
-   │  assist-microphone (Wyoming satellite)        :10700        │
-   │    - USB mic  "Microphone" (arecord)                        │
-   │    - USB DAC  "UACDemoV10" (aplay)                          │
-   │  openwakeword (hey_jarvis, threshold 0.4)     :10400        │
-   │  piper (TTS, fr_FR-siwis-medium)              :10200        │
+   │  homeassistant (Docker, host network)         :8123       │
+   │  assist-microphone (Wyoming satellite)        :10700      │
+   │    - USB mic  "Microphone" (arecord)                      │
+   │    - USB DAC  "UACDemoV10" (aplay)                        │
+   │  openwakeword (hey_jarvis, threshold 0.4)     :10400      │
+   │  piper (TTS, fr_FR-siwis-medium)              :10200      │
    └───────────────────────────────────────────────────────────┘
                     │ Wyoming protocol over the LAN
                     ▼
                           Windows PC (RTX 4060, 8 GB)
    ┌───────────────────────────────────────────────────────────┐
-   │  wyoming-faster-whisper (native, whisper.bat)  :10300        │
-   │    large-v3-turbo, CUDA, float16, beam-size 5                │
-   │  ollama (Docker)                              :11434        │
-   │    qwen3.5:9b                                                │
+   │  wyoming-faster-whisper (native, whisper.bat)  :10300     │
+   │    large-v3-turbo, CUDA, float16, beam-size 5             │
+   │  ollama (Docker)                              :11434      │
+   │    qwen3.5:9b                                             │
    └───────────────────────────────────────────────────────────┘
 ```
 
